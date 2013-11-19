@@ -20,6 +20,7 @@ public class Client
     ObjectInputStream in;
     String message;
     
+    
 //    Requester(){
 	
 	
