@@ -35,37 +35,36 @@ public class Client
         	int port = 0;
         	port = this.enteredPort();
             this.socket = new Socket("localhost",port);
-          
+			System.out.println("Client connecté sur le port :  " + port);
+
             //2. get Input and Output streams
             out = new ObjectOutputStream(this.socket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(this.socket.getInputStream());
+        	boolean quitter = false;
+
             //3: Communicating with the server
             do{
                 try{
-                	
-                	boolean quitter = false;
-            		message = (String)in.readObject();
+
 
                 	while(quitter == false)
                 	{
-                		
+
                 		int messageClient = clientChoice();
-                		System.out.println(messageClient);
-                		System.out.println(quitter);
+                		
                 		if (messageClient == 1)
                 		{
-
+                			this.playGame();
                 		}
                 		else if(messageClient == 2)
                 		{
-
+                			this.seeScore();
                 		}
                 		else if(messageClient == 3)
                 		{
 
                 			quitter = true;
-                    		System.out.println(quitter);
                         	System.out.println("server>" + message);
                         	sendMessage("Hi my server");		
 //                       
@@ -75,12 +74,13 @@ public class Client
                 		}	                	
 //                    
                 	}
-                	
+            		message = (String)in.readObject();
+
                 }
                 catch(ClassNotFoundException classNot){
                     System.err.println("data received in unknown format");
                 }
-            }while(!message.equals("bye"));
+            }while(!quitter);
         }
         catch(UnknownHostException unknownHost){
             System.err.println("You are trying to connect to an unknown host!");
@@ -100,6 +100,17 @@ public class Client
             }
         }
     }
+	private void playGame() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void seeScore() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 	private int clientChoice() 
 	{
 		int choice = 0;
@@ -108,7 +119,7 @@ public class Client
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String line = in.readLine();
-			System.out.println("Vous avez choisi :  " + choice);
+			System.out.println("Vous avez choisi :  " + line);
 			choice = Integer.parseInt(line);
 		
 			
@@ -128,7 +139,6 @@ public class Client
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 				String line = in.readLine();
-				System.out.println("Client connecté sur le port :  " + line);
 
 				port =  Integer.parseInt(line);
 				
