@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Classe Serveur
+ * Classe Serveur 
  * @author Laurie
  *
  */
@@ -31,7 +31,7 @@ public class Serveur
 	            providerSocket = new ServerSocket(port, 10);
 
 	            //2. Wait for connection
-	            System.out.println("Waiting for connection");
+	            System.out.println("Attend une connection");
 	            this.connection = this.providerSocket.accept();
 	            System.out.println("Connection received from " + connection.getInetAddress().getHostName());
 	            //3. get Input and Output streams
