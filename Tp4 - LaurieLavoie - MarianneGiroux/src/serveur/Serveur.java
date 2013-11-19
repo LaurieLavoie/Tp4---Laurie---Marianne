@@ -8,11 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * Classe Serveur 
- * @author Laurie
- *
- */
+
 
 public class Serveur
 {

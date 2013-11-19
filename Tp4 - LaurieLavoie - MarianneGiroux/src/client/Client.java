@@ -19,6 +19,7 @@ public class Client
     ObjectOutputStream out;
     ObjectInputStream in;
     String message;
+    
 //    Requester(){
 	
 	
