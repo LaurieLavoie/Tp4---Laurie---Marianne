@@ -19,7 +19,6 @@ public class Serveur
 	    String message;
 	    Serveur(){}
 	    void run()
-	    
 	    {
 	        try{
 
