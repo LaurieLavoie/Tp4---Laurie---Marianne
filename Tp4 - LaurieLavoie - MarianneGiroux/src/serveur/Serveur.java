@@ -138,6 +138,7 @@ public class Serveur implements Runnable
 	            		catch (XPathExpressionException e) 
 	            		{
 	            			
+	            			
 	            			e.printStackTrace();
 	            		}
 	            		try 
@@ -230,10 +231,6 @@ public class Serveur implements Runnable
 		}
 	 }
 	 
-	 public void addScore()
-	 {
-		 
-	 }
 	 
 	 public void sendWord()
 	 {
