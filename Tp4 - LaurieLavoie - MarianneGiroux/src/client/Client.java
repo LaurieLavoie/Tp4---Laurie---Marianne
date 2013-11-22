@@ -41,7 +41,7 @@ public class Client
             this.out.flush();
             this.in = new ObjectInputStream(this.socket.getInputStream());
         	boolean quitter = false;
-
+        	loginUser();
             //3: Communicating with the server
             do{
                 try{
@@ -113,8 +113,40 @@ public class Client
 	}
 	private void loginUser()
 	{
+		int choice = 0;
+    	
+    	System.out.print("Entré 1 pour vous connecter, 2 pour créer un compte: ");
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			String line = in.readLine();
+			System.out.println("Vous avez choisi :  " + line);
+			choice = Integer.parseInt(line);
+		
+			
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		if(choice == 1)
+		{
+			userExist();
+		}
+		else if(choice == 2)
+		{
+			createUser();
+		}
+		
+		
 		
 	}
+	
+	private void userExist()
+	{
+		
+	}
+	
 	private void sendScore()
 	{
 		
