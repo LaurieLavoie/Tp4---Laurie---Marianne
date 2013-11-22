@@ -113,7 +113,7 @@ public class Client
 	private void loginUser()
 	{
 		int choice = 0;
-    	
+    	boolean f = true;
     	System.out.print("Entré 1 pour vous connecter, 2 pour créer un compte: ");
 		try 
 		{
