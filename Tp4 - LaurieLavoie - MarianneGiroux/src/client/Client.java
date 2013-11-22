@@ -5,8 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StringReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 
 public class Client 
@@ -40,7 +49,68 @@ public class Client
             this.out.flush();
             this.in = new ObjectInputStream(this.socket.getInputStream());
         	boolean quitter = false;
-        	loginUser();
+        	String msgToClient = "";
+        	do
+        	{
+        		try {
+        			loginUser();
+        			
+					String msgXml = "";
+					this.message = (String)in.readObject();
+        			XPathFactory xpathFactory = XPathFactory.newInstance();
+        			XPath xpath = xpathFactory.newXPath();
+	            	InputSource source = new InputSource(new StringReader(this.message));
+	            	Document doc = null;
+	            	System.out.println("serveur>" + this.message);
+	            	
+	            	try
+            		{
+            			doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+            		} 
+            		catch (XPathExpressionException e)
+            		{
+            			
+            			e.printStackTrace();
+            		}
+            		
+            		try
+            		{
+            			try 
+            			{
+							msgXml = xpath.evaluate("/name/client", doc);
+						} 
+            			catch (XPathExpressionException e)
+            			{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+            			try 
+            			{
+							msgXml = xpath.evaluate("/password/client", doc);
+						} 
+            			catch (XPathExpressionException e)
+            			{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+            		}
+	            	finally
+	            	{
+	            		
+	            	}
+	            	
+            		
+        			}
+	            	catch (ClassNotFoundException e)
+	            	{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        		
+        	}while(!msgToClient.equals("erreur"));
+        	
+        	
+        	
             //3: Communicating with the server
             do{
                 try{
@@ -113,7 +183,6 @@ public class Client
 	private void loginUser()
 	{
 		int choice = 0;
-    	boolean f = true;
     	System.out.print("Entré 1 pour vous connecter, 2 pour créer un compte: ");
 		try 
 		{
@@ -143,7 +212,29 @@ public class Client
 	
 	private void userExist()
 	{
+		System.out.println("Entrez votre nom d'utilisateur : ");
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		String lineUsername = "";
 		
+		try {
+			lineUsername = in.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("Entrez votre mot de passe : ");
+		BufferedReader inPsswd = new BufferedReader(new InputStreamReader(System.in));
+		String linePassword = "";
+		try {
+			linePassword = inPsswd.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String xml = "<client><username>" + lineUsername + "</username><password>" + linePassword +"</password></client>";
+		sendMessage(xml);
 	}
 	
 	private void sendScore()
@@ -152,7 +243,29 @@ public class Client
 	}
 	private void createUser()
 	{
+		System.out.println("Entrez votre nom d'utilisateur : ");
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		String lineUsername = "";
 		
+		try {
+			lineUsername = in.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("Entrez votre mot de passe : ");
+		BufferedReader inPsswd = new BufferedReader(new InputStreamReader(System.in));
+		String linePassword = "";
+		try {
+			linePassword = inPsswd.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String xml = "<client><newName>" + lineUsername + "</newName><newPassword>" + linePassword +"</newPassword></client>";
+		sendMessage(xml);
 	}
 	
  	private void seeScore()

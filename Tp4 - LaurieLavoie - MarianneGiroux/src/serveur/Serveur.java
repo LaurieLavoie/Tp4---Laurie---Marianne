@@ -70,18 +70,28 @@ public class Serveur implements Runnable
 	            			e.printStackTrace();
 	            		}
 	            		
-	            		try
+	            		if(this.message.contains("quitter"))
 	            		{
-	            			clientMsg = xpath.evaluate("/quitter", doc);
-	            			this.quit();
-	            			quitter = true;
-	            		}
-	            		catch (XPathExpressionException e) 
-	            		{
+	            			try
+	            			{
+	            				clientMsg = xpath.evaluate("/quitter", doc);
+	            				this.quit();
+	            				quitter = true;
+	            			}
+	            			catch (XPathExpressionException e) 
+	            			{
 	            			
-	            			e.printStackTrace();
+	            				e.printStackTrace();
+	            			}
 	            		}
-	            		try 
+	            		
+	            		
+	            		
+	            		
+	            		if(this.message.contains("jouer"))
+	            		{
+	            			try 
+	            		
 	            		{
 	            			clientMsg = xpath.evaluate("/jouer", doc);
 	            			this.sendWord();
@@ -91,7 +101,10 @@ public class Serveur implements Runnable
 	            			
 	            			e.printStackTrace();
 	            		}
+	            		}
 	            		
+	            		if(this.message.contains("voirScore"))
+	            		{
 	            		try 
 	            		{
 	            			clientMsg = xpath.evaluate("/voirScore", doc);
@@ -102,7 +115,10 @@ public class Serveur implements Runnable
 	            			
 	            			e.printStackTrace();
 	            		}
+	            		}
 	            		
+	            		if(this.message.contains("nouveauScore") && this.message.contains("essai"))
+	            		{
 	            		try 
 	            		{
 	            			clientMsg = xpath.evaluate("/nouveauScore/essai", doc);
@@ -113,7 +129,9 @@ public class Serveur implements Runnable
 	            			
 	            			e.printStackTrace();
 	            		}
-	            		
+	            		}
+	            		if(this.message.contains("nouveauScore") && this.message.contains("essai"))
+	            		{
 	            		try 
 	            		{
 	            			clientMsg = xpath.evaluate("/nouveauScore/mot", doc);
@@ -124,7 +142,9 @@ public class Serveur implements Runnable
 	            			
 	            			e.printStackTrace();
 	            		}
-	            		
+	            		}
+	            		if(this.message.contains("name"))
+	            		{
 	            		try 
 	            		{
 	            			clientMsg = xpath.evaluate("/client/name", doc);
@@ -136,7 +156,9 @@ public class Serveur implements Runnable
 	            			
 	            			e.printStackTrace();
 	            		}
-	            		
+	            		}
+	            		if(this.message.contains("Name"))
+	            		{
 	            		try 
 	            		{
 	            			clientMsg = xpath.evaluate("/client/newPassword", doc);
@@ -147,6 +169,7 @@ public class Serveur implements Runnable
 	            		{
 	            			
 	            			e.printStackTrace();
+	            		}
 	            		}
 	          
 	            	}
@@ -473,7 +496,7 @@ public class Serveur implements Runnable
 				 writer.write("<username>" + clientMsg + "</username>");
 				 writer.write("<password>" + Password + "</password>");
 				 writer.close();
-				 xml = "<client><new>ok</new></Client>";
+				 xml = "<client><new>ok</new></client>";
 				 sendMessage(xml);
 				 
 			 }
@@ -485,7 +508,7 @@ public class Serveur implements Runnable
 		 }
 		 else
 		 {
-			 xml = "<client><new>erreur</new></Client>";
+			 xml = "<client><new>erreur</new></client>";
 			 sendMessage(xml);
 		 }
 	 }
