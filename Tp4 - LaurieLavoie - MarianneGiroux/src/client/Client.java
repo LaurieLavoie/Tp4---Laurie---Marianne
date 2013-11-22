@@ -12,12 +12,11 @@ import java.net.UnknownHostException;
 public class Client 
 {
 
-	private Client client;
-	Socket socket;
+	private Socket socket;
 	
-    ObjectOutputStream out;
-    ObjectInputStream in;
-    String message;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private String message;
     
     
 //    Requester(){
@@ -38,9 +37,9 @@ public class Client
 			System.out.println("Client connecté sur le port :  " + port);
 
             //2. get Input and Output streams
-            out = new ObjectOutputStream(this.socket.getOutputStream());
-            out.flush();
-            in = new ObjectInputStream(this.socket.getInputStream());
+            this.out = new ObjectOutputStream(this.socket.getOutputStream());
+            this.out.flush();
+            this.in = new ObjectInputStream(this.socket.getInputStream());
         	boolean quitter = false;
 
             //3: Communicating with the server
@@ -65,16 +64,16 @@ public class Client
                 		{
 
                 			quitter = true;
-                        	System.out.println("server>" + message);
+                        	System.out.println("server>" + this.message);
                         	sendMessage("Hi my server");		
 //                       
-                           	message = "bye";
-                            sendMessage(message);
+                           	this.message = "bye";
+                            sendMessage(this.message);
 
                 		}	                	
 //                    
                 	}
-            		message = (String)in.readObject();
+            		this.message = (String)this.in.readObject();
 
                 }
                 catch(ClassNotFoundException classNot){
@@ -91,8 +90,8 @@ public class Client
         finally{
             //4: Closing connection
             try{
-                in.close();
-                out.close();
+                this.in.close();
+                this.out.close();
                 this.socket.close();
             }
             catch(IOException ioException){
@@ -100,17 +99,43 @@ public class Client
             }
         }
     }
-	private void playGame() {
-		// TODO Auto-generated method stub
+	private void playGame() 
+	{
 		
 	}
-
-	private void seeScore() {
-		// TODO Auto-generated method stub
+	private void enteredChar()
+	{
 		
 	}
-
-
+	private void displayWord()
+	{
+		
+	}
+	private void loginUser()
+	{
+		
+	}
+	private void sendScore()
+	{
+		
+	}
+	private void createUser()
+	{
+		
+	}
+	
+ 	private void seeScore()
+	{
+		
+	}
+	private void generateXml()
+	{
+		
+	}
+	private void quit()
+	{
+		
+	}
 	private int clientChoice() 
 	{
 		int choice = 0;
@@ -153,8 +178,8 @@ public class Client
     {
         try{
 
-            out.writeObject(msg);
-            out.flush();
+            this.out.writeObject(msg);
+            this.out.flush();
             System.out.println("client>" + msg);
         }
         catch(IOException ioException){

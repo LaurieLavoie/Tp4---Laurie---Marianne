@@ -39,13 +39,15 @@ public class Serveur implements Runnable
 	
 	 public void run()
 	    {
-	        try{
+	        try
+	        {
 	            this.out = new ObjectOutputStream(connection.getOutputStream());
 	            this.out.flush();
 	            in = new ObjectInputStream(connection.getInputStream());
 	            boolean quitter = false;
 	            //4. The two parts communicate via the input and output streams
-	            do{
+	            do
+	            {
 	            	
 	            	
 	                try
@@ -157,17 +159,21 @@ public class Serveur implements Runnable
 	                
 	            }while(!quitter);
 	        }
-	        catch(IOException ioException){
+	        catch(IOException ioException)
+	        {
 	            ioException.printStackTrace();
 	        }
-	        finally{
+	        finally
+	        {
 	            //4: Closing connection
-	            try{
+	            try
+	            {
 	                in.close();
 	                out.close();
 	                ssock.close();
 	            }
-	            catch(IOException ioException){
+	            catch(IOException ioException)
+	            {
 	                ioException.printStackTrace();
 	            }
 	        }
@@ -214,13 +220,16 @@ public class Serveur implements Runnable
 	    	int port = 0;
 	    	
 	    	System.out.println("Entrez le port désiré: ");
-			try {
+			try
+			{
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 				String line = in.readLine();
 				System.out.println("Serveur connecté sur le port :  " + line);
 				port =  Integer.parseInt(line);
 				
-			} catch (IOException e) {
+			} 
+			catch (IOException e) 
+			{
 				e.printStackTrace();
 			}
 			
@@ -230,12 +239,14 @@ public class Serveur implements Runnable
 	    
 	 private void sendMessage(String msg)
 	    {
-	        try{
+	        try
+	        {
 	            out.writeObject(msg);
 	            out.flush();
 	            System.out.println("server>" + msg);
 	        }
-	        catch(IOException ioException){
+	        catch(IOException ioException)
+	        {
 	            ioException.printStackTrace();
 	        }
 	    }
@@ -246,9 +257,10 @@ public class Serveur implements Runnable
 		 try 
 		 {
 			ssock = new ServerSocket(port);
-		 } catch (IOException e)
+		 } 
+		 catch (IOException e)
 		 {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		 }
 		 System.out.println("En attente de connection");
@@ -262,7 +274,6 @@ public class Serveur implements Runnable
 			 }
 			 catch (IOException e)
 			 {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			 }
 			 System.out.println("Connecté");
@@ -294,7 +305,6 @@ public class Serveur implements Runnable
 			 }
 			 catch (IOException e) 
 			 {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			 }
 		 }
@@ -361,7 +371,6 @@ public class Serveur implements Runnable
 		} 
  		catch (XPathExpressionException e) 
  		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
  		 
@@ -375,12 +384,12 @@ public class Serveur implements Runnable
 			}
 			catch (FileNotFoundException e1)
 			{
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		
 		
-		    try {
+		    try 
+		    {
 		        StringBuilder sb = new StringBuilder();
 		        String line = null;
 				
@@ -400,8 +409,9 @@ public class Serveur implements Runnable
 		            }
 		        }
 		        
-		    } catch (IOException | XPathExpressionException e) {
-				// TODO Auto-generated catch block
+		    } 
+		    catch (IOException | XPathExpressionException e)
+		    {
 				e.printStackTrace();
 			}
 		    finally 
@@ -412,7 +422,6 @@ public class Serveur implements Runnable
 				} 
 		        catch (IOException e) 
 		        {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    }
@@ -457,7 +466,8 @@ public class Serveur implements Runnable
 		 String xml = "";
 		 if (!file.exists())
 		 {
-			 try{
+			 try
+			 {
 				 BufferedWriter writer = new BufferedWriter(new FileWriter(new File(clientMsg + ".txt")));
 				 
 				 writer.write("<username>" + clientMsg + "</username>");
