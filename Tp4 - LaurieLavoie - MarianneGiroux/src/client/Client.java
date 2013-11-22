@@ -19,7 +19,6 @@ public class Client
     private String message;
     
     
-//    Requester(){
 	
 	
 	public Client()
