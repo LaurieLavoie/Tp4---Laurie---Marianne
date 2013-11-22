@@ -127,7 +127,7 @@ public class Serveur implements Runnable
 	            		
 	            		try 
 	            		{
-	            			clientMsg = xpath.evaluate("/client/nom", doc);
+	            			clientMsg = xpath.evaluate("/client/name", doc);
 	            			clientPassword = xpath.evaluate("/client/password", doc);
 	            			this.userExist(clientMsg, clientPassword);
 	            		} 
@@ -140,7 +140,7 @@ public class Serveur implements Runnable
 	            		try 
 	            		{
 	            			clientMsg = xpath.evaluate("/client/newPassword", doc);
-	            			clientPassword = xpath.evaluate("/client/nom", doc);
+	            			clientPassword = xpath.evaluate("/client/newName", doc);
 	            			this.createUser(clientMsg, clientPassword);
 	            		} 
 	            		catch (XPathExpressionException e) 
