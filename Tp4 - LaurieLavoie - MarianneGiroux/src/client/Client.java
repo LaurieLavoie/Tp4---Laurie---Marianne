@@ -216,9 +216,12 @@ public class Client
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		String lineUsername = "";
 		
-		try {
+		try 
+		{
 			lineUsername = in.readLine();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -226,9 +229,12 @@ public class Client
 		System.out.println("Entrez votre mot de passe : ");
 		BufferedReader inPsswd = new BufferedReader(new InputStreamReader(System.in));
 		String linePassword = "";
-		try {
+		try 
+		{
 			linePassword = inPsswd.readLine();
-		} catch (IOException e) {
+		} 
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
