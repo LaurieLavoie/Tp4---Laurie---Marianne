@@ -37,6 +37,36 @@ public class Serveur implements Runnable
 	    this.run();
 	 }
 	
+	 public static void main(String args[]) 
+	 {
+		 int port = enteredPort();
+		 
+		 try 
+		 {
+			ssock = new ServerSocket(port);
+		 } 
+		 catch (IOException e)
+		 {
+			
+			e.printStackTrace();
+		 }
+		 System.out.println("En attente de connection");
+		 while (true)
+		 {
+			 
+			 Socket sock = null;
+			 try 
+			 {
+				sock = ssock.accept();
+			 }
+			 catch (IOException e)
+			 {
+				e.printStackTrace();
+			 }
+			 System.out.println("ConnectÃ©");
+			 new Thread(new Serveur(sock)).start();
+		}
+	 }
 	 public void run()
 	    {
 	        try
@@ -147,7 +177,7 @@ public class Serveur implements Runnable
 	            		{
 	            		try 
 	            		{
-	            			clientMsg = xpath.evaluate("/client/name", doc);
+	            			clientMsg = xpath.evaluate("/client/username", doc);
 	            			clientPassword = xpath.evaluate("/client/password", doc);
 	            			this.userExist(clientMsg, clientPassword);
 	            		} 
@@ -161,9 +191,9 @@ public class Serveur implements Runnable
 	            		{
 	            		try 
 	            		{
-	            			clientMsg = xpath.evaluate("/client/newPassword", doc);
-	            			clientPassword = xpath.evaluate("/client/newName", doc);
-	            			this.createUser(clientMsg, clientPassword);
+	            			clientPassword = xpath.evaluate("/client/newPassword", doc);
+	            			clientMsg = xpath.evaluate("/client/newName", doc);
+	            			this.createUser(clientPassword,clientMsg);
 	            		} 
 	            		catch (XPathExpressionException e) 
 	            		{
@@ -242,12 +272,12 @@ public class Serveur implements Runnable
 	    {
 	    	int port = 0;
 	    	
-	    	System.out.println("Entrez le port désiré: ");
+	    	System.out.println("Entrez le port dï¿½sirï¿½: ");
 			try
 			{
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 				String line = in.readLine();
-				System.out.println("Serveur connecté sur le port :  " + line);
+				System.out.println("Serveur connectï¿½ sur le port :  " + line);
 				port =  Integer.parseInt(line);
 				
 			} 
@@ -273,43 +303,14 @@ public class Serveur implements Runnable
 	            ioException.printStackTrace();
 	        }
 	    }
-	 public static void main(String args[]) 
-	 {
-		 int port = enteredPort();
-		 
-		 try 
-		 {
-			ssock = new ServerSocket(port);
-		 } 
-		 catch (IOException e)
-		 {
-			
-			e.printStackTrace();
-		 }
-		 System.out.println("En attente de connection");
-		 while (true)
-		 {
-			 
-			 Socket sock = null;
-			 try 
-			 {
-				sock = ssock.accept();
-			 }
-			 catch (IOException e)
-			 {
-				e.printStackTrace();
-			 }
-			 System.out.println("Connecté");
-			 new Thread(new Serveur(sock)).start();
-		}
-	 }
+	
 	 
 	 private synchronized void sendWord() 
 	 {
 		 BufferedReader br = null;
 		 try 
 		 {
-			 br = new BufferedReader(new FileReader("listeMots.txt"));
+			 br = new BufferedReader(new FileReader("liste_francais.txt"));
 		 }
 		 catch (FileNotFoundException e) 
 		 {
@@ -375,7 +376,7 @@ public class Serveur implements Runnable
 	 
 	 private synchronized void quit()
 	 {
-		 System.out.println(this.nameUser + " se déconnecte.  ");
+		 System.out.println(this.nameUser + " se dÃ©connecte.  ");
 		 String xml = "<quitter>ok</quitter>";
 		 sendMessage(xml);
 	 }
@@ -383,93 +384,99 @@ public class Serveur implements Runnable
 	 private synchronized void comparePassword(String clientPassword, File file) 
 	 {
 		 
-		XPathFactory xpathFactory = XPathFactory.newInstance();
- 		XPath xpath = xpathFactory.newXPath();
- 		InputSource source = new InputSource(new StringReader(message));
- 		Document doc = null;
- 		
- 		try
- 		{
-			doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
-		} 
- 		catch (XPathExpressionException e) 
- 		{
-			e.printStackTrace();
-		}
- 		 
- 		boolean find = false;
-		String passwordLine = "";
 		BufferedReader br = null;
 		
-			try 
-			{
-				br = new BufferedReader(new FileReader(file));
-			}
-			catch (FileNotFoundException e1)
-			{
-				e1.printStackTrace();
-			}
-		
-		
-		    try 
-		    {
-		        StringBuilder sb = new StringBuilder();
-		        String line = null;
-				
-				line = br.readLine();
-			
-		        
-		        while (!find) 
-		        {
-		            sb.append(line);
-		            sb.append('\n');
-		            line = br.readLine();
-		            if(line.contains("password"))
-		            {
-		            	find = true;
-		            	passwordLine  =  xpath.evaluate("/password", doc); 
-		            	
-		            }
-		        }
-		        
-		    } 
-		    catch (IOException | XPathExpressionException e)
-		    {
-				e.printStackTrace();
-			}
-		    finally 
-		    {
-		        try 
-		        {
-					br.close();
-				} 
-		        catch (IOException e) 
-		        {
+				try
+				{
+					br = new BufferedReader(new FileReader(file));
+					
+				}
+				catch (FileNotFoundException e)
+				{
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-		    }
+			
+		
+		
+//		
+		   
+		        String line = null;
+				
+				try
+				{
+					
+					line = br.readLine();
+				} 
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+				XPathFactory xpathFactory = XPathFactory.newInstance();
+		 		XPath xpath = xpathFactory.newXPath();
+		 		InputSource source = new InputSource(new StringReader(line));
+		 		Document doc = null;
+		 		
+		 		
+					try 
+					{
+						doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+					} 
+					catch (XPathExpressionException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				 
 		 
-		 
-		 if(clientPassword.equals(passwordLine))
-		 {
-			 String xml = "<client><passWord>ok</passWord></client>";
-			 sendMessage(xml);
-		 }
-		 else
-		 {
-			 String xml = "<client><passWord>erreur</passWord></client>";
-			 sendMessage(xml); 
-		 }
-		 
-	 }
-	 
+		 		
+				
+		 		if(line.contains("/password"))
+        		{
+		 			
+		 				try 
+		 				{
+							clientPassword = xpath.evaluate("/client/password", doc);
+							String xml = "<loginUser>ok</loginUser>";
+							sendMessage(xml);
+        			
+						}
+		 				catch (XPathExpressionException e)
+		 				{
+		 					String xml = "<client><password>Erreur</password></client>";
+		 					
+							sendMessage(xml);
+        			
+							e.printStackTrace();
+						}
+		 				
+        			
+		 		
+        			
+		 			
+		 				
+		 			}
+				
+		 		try
+		 		{
+					br.close();
+				}
+		 		catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        }
+	 	 
 	 private synchronized void userExist(String clientMsg, String Password) 
 	 {
 		this.nameUser = clientMsg;
-		
+	
 		File file = new File(clientMsg + ".txt");
 		
-		if (file.isFile())
+		if (file.exists())
 		{
 			this.comparePassword(Password, file);
 			
@@ -481,10 +488,10 @@ public class Serveur implements Runnable
 		}
 	 }
 	 
-	 private synchronized void createUser(String clientMsg, String Password)
+	 private synchronized void createUser(String Password, String clientMsg)
 	 {
 		 this.nameUser = clientMsg;
-		 
+		 System.out.println(clientMsg);
 		 File file = new File(clientMsg + ".txt");
 		 String xml = "";
 		 if (!file.exists())
@@ -493,8 +500,8 @@ public class Serveur implements Runnable
 			 {
 				 BufferedWriter writer = new BufferedWriter(new FileWriter(new File(clientMsg + ".txt")));
 				 
-				 writer.write("<username>" + clientMsg + "</username>");
-				 writer.write("<password>" + Password + "</password>");
+				 writer.write("<client><username>" + clientMsg + "</username><password>" + Password + "</password></client>");
+				
 				 writer.close();
 				 xml = "<client><new>ok</new></client>";
 				 sendMessage(xml);

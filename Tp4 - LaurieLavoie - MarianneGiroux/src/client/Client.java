@@ -41,21 +41,20 @@ public class Client
             //1. creating a socket to connect to the server
         	int port = 0;
         	port = this.enteredPort();
-            this.socket = new Socket("localhost",port);
-			System.out.println("Client connecté sur le port :  " + port);
+            this.socket = new Socket("162.209.100.18",port);
+			System.out.println("Client connectï¿½ sur le port :  " + port);
 
             //2. get Input and Output streams
             this.out = new ObjectOutputStream(this.socket.getOutputStream());
             this.out.flush();
             this.in = new ObjectInputStream(this.socket.getInputStream());
         	boolean quitter = false;
-        	String msgToClient = "";
+        	String msgXml = "";
         	do
         	{
         		try {
         			loginUser();
         			
-					String msgXml = "";
 					this.message = (String)in.readObject();
         			XPathFactory xpathFactory = XPathFactory.newInstance();
         			XPath xpath = xpathFactory.newXPath();
@@ -73,41 +72,49 @@ public class Client
             			e.printStackTrace();
             		}
             		
-            		try
-            		{
-            			try 
+            		
+            		try 
             			{
 							msgXml = xpath.evaluate("/name/client", doc);
 						} 
-            			catch (XPathExpressionException e)
+            		catch (XPathExpressionException e)
             			{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-            			try 
+            		try 
             			{
 							msgXml = xpath.evaluate("/password/client", doc);
 						} 
-            			catch (XPathExpressionException e)
+            		catch (XPathExpressionException e)
             			{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+            		
+            		try 
+        			{
+						msgXml = xpath.evaluate("/loginUser", doc);
+					} 
+            		catch (XPathExpressionException e)
+        			{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
             		}
-	            	finally
-	            	{
-	            		
-	            	}
+	            
 	            	
             		
-        			}
+        			
 	            	catch (ClassNotFoundException e)
 	            	{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
         		
-        	}while(!msgToClient.equals("erreur"));
+        		System.out.println(msgXml);
+        		
+        	}while(!msgXml.equals("ok"));
         	
         	
         	
@@ -183,7 +190,7 @@ public class Client
 	private void loginUser()
 	{
 		int choice = 0;
-    	System.out.print("Entré 1 pour vous connecter, 2 pour créer un compte: ");
+    	System.out.print("Entrï¿½ 1 pour vous connecter, 2 pour crï¿½er un compte: ");
 		try 
 		{
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -290,7 +297,7 @@ public class Client
 	{
 		int choice = 0;
     	
-    	System.out.print("Entré 1 pour jouer, 2 pour voir vos scores ou 3 pour quitter: ");
+    	System.out.print("Entrï¿½ 1 pour jouer, 2 pour voir vos scores ou 3 pour quitter: ");
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String line = in.readLine();
@@ -310,7 +317,7 @@ public class Client
 	    {
 	    	int port = 0;
 	    	
-	    	System.out.println("Entrez le port désiré: ");
+	    	System.out.println("Entrez le port dï¿½sirï¿½: ");
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 				String line = in.readLine();
