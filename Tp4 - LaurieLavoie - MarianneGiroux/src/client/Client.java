@@ -50,17 +50,29 @@ public class Client
             this.in = new ObjectInputStream(this.socket.getInputStream());
         	boolean quitter = false;
         	String msgXml = "";
+        	
+        	
+        	
+        	try {
+				this.message = (String)in.readObject();
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+        	
+        	
+        	
         	do
         	{
         		try {
         			loginUser();
-        			
-					this.message = (String)in.readObject();
         			XPathFactory xpathFactory = XPathFactory.newInstance();
         			XPath xpath = xpathFactory.newXPath();
-	            	InputSource source = new InputSource(new StringReader(this.message));
-	            	Document doc = null;
-	            	System.out.println("serveur>" + this.message);
+                	InputSource source = new InputSource(new StringReader(this.message));
+                	Document doc = null;
+                	System.out.println("serveur>" + this.message);
+					
 	            	
 	            	try
             		{
@@ -101,18 +113,16 @@ public class Client
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-            		}
+            		
 	            
 	            	
-            		
-        			
-	            	catch (ClassNotFoundException e)
-	            	{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+        		}
+        		finally
+        		{
+        				System.out.println(msgXml);
+        		}
         		
-        		System.out.println(msgXml);
+        	
         		
         	}while(!msgXml.equals("ok"));
         	
@@ -127,8 +137,14 @@ public class Client
                 	{
 
                 		int messageClient = clientChoice();
+                		XPathFactory xpathFactory = XPathFactory.newInstance();
+            			XPath xpath = xpathFactory.newXPath();
+                    	InputSource source = new InputSource(new StringReader(this.message));
+                    	Document doc = null;
+                    	System.out.println("serveur>" + this.message);
                 		
-                		if (messageClient == 1)
+                    	
+                    	if (messageClient == 1)
                 		{
                 			this.playGame();
                 		}
@@ -139,12 +155,19 @@ public class Client
                 		else if(messageClient == 3)
                 		{
 
-                			quitter = true;
-                        	System.out.println("server>" + this.message);
-                        	sendMessage("Hi my server");		
-//                       
-                           	this.message = "bye";
-                            sendMessage(this.message);
+                		
+                			this.quit();
+                			try 
+                			{
+    							msgXml = xpath.evaluate("/quitter", doc);
+    							quitter = true;
+    						} 
+                			catch (XPathExpressionException e)
+                			{
+    							// TODO Auto-generated catch block
+    							e.printStackTrace();
+    						}
+                			
 
                 		}	                	
 //                    
@@ -291,7 +314,13 @@ public class Client
 	}
 	private void quit()
 	{
+	 	
 		
+    	String xml = "<quitter>quit</quitter>";
+        sendMessage(xml);
+        
+        
+        
 	}
 	private int clientChoice() 
 	{

@@ -21,6 +21,12 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
+/**
+ * La classe Serveur contient les fonctionnalités serveur du jeu "bonhomme pendu"
+ * @author Marianne Giroux et Laurie Lavoie
+ */
+
 public class Serveur implements Runnable
 {
 	
@@ -36,7 +42,10 @@ public class Serveur implements Runnable
 	  	this.connection = socket;
 	    this.run();
 	 }
-	
+	  
+     /**
+  	* Permet de se connecter au serveur
+  	*/
 	 public static void main(String args[]) 
 	 {
 		 int port = enteredPort();
@@ -67,6 +76,8 @@ public class Serveur implements Runnable
 			 new Thread(new Serveur(sock)).start();
 		}
 	 }
+	 
+	 
 	 public void run()
 	    {
 	        try
@@ -102,17 +113,11 @@ public class Serveur implements Runnable
 	            		
 	            		if(this.message.contains("quitter"))
 	            		{
-	            			try
-	            			{
-	            				clientMsg = xpath.evaluate("/quitter", doc);
+	            			
 	            				this.quit();
 	            				quitter = true;
-	            			}
-	            			catch (XPathExpressionException e) 
-	            			{
 	            			
-	            				e.printStackTrace();
-	            			}
+	            			
 	            		}
 	            		
 	            		
@@ -232,6 +237,11 @@ public class Serveur implements Runnable
 	        }
 	    }
 
+	 /**
+   	* Enregistre un score dans le fichier texte correspondant au nom d'utilisateur
+   	* @param	clientMsg	Le nom d'utilisateur
+   	* @param	typeScore	Le score de l'utilisateur
+   	*/
 	 private synchronized void  setScore(String clientMsg, String typeScore)
 	 {
 		 String xml = "";
@@ -268,6 +278,10 @@ public class Serveur implements Runnable
 		 }
 			
 	 }
+	
+	  /**
+   	* Lit le port sur lequel le serveur doit se connecter, puis se connecte
+   	*/
 	 private static int enteredPort()
 	    {
 	    	int port = 0;
@@ -289,7 +303,10 @@ public class Serveur implements Runnable
 			return port;
 	    	
 	    }
-	    
+	  /**
+   	* Envoie à l'écran un message du serveur
+   	* @param	msg		Le message à envoyer
+   	*/ 
 	 private void sendMessage(String msg)
 	    {
 	        try
@@ -305,6 +322,9 @@ public class Serveur implements Runnable
 	    }
 	
 	 
+     /**
+  	* Envoie un mot au hasard à partir de la liste : "liste_français.txt"
+  	*/
 	 private synchronized void sendWord() 
 	 {
 		 BufferedReader br = null;
@@ -338,6 +358,9 @@ public class Serveur implements Runnable
 	
 	 }
 	 
+     /**
+  	* Permet de retrouver le meilleur score d'un utilisateur
+  	*/
 	 private synchronized void getScore()
 	 {
 		 try
@@ -373,14 +396,26 @@ public class Serveur implements Runnable
 		 
 		 
 	 }
-	 
+	 //Ferme le serveur
 	 private synchronized void quit()
 	 {
 		 System.out.println(this.nameUser + " se déconnecte.  ");
 		 String xml = "<quitter>ok</quitter>";
 		 sendMessage(xml);
+
+         try {
+			in.close();
+			 out.close();
+         ssock.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
 	 }
-	 
+	 /*Compare le mot de passe avec celui que l'utilisateur a entré et celui qui est contenu dans le fichier texte
+     correspondant au nom d'utilisateur entré */
 	 private synchronized void comparePassword(String clientPassword, File file) 
 	 {
 		 
@@ -469,7 +504,11 @@ public class Serveur implements Runnable
 					e.printStackTrace();
 				}
 		        }
-	 	 
+	  /**
+   	* Permet de se connecter en tant qu'utilisateur en vérifiant le nom et mot de passe
+   	* @param	clientMsg	Le nom d'utilisateur entré par l'utilisateur
+   	* @param	Password	Le mot de passe entré par l'utilisateur
+   	*/	 
 	 private synchronized void userExist(String clientMsg, String Password) 
 	 {
 		this.nameUser = clientMsg;
@@ -487,7 +526,11 @@ public class Serveur implements Runnable
 			sendMessage(xml);
 		}
 	 }
-	 
+	 /**
+  	* Permet de créer un fichier texte contenant le nom de l'utilisateur et le mot de passe qu'il a choisi
+  	* @param	clientMsg	Le nom d'utilisateur que l'utilisateur a choisi
+  	* @param	Password	Le mot de passe que l'utilisateur a choisi
+  	*/
 	 private synchronized void createUser(String Password, String clientMsg)
 	 {
 		 this.nameUser = clientMsg;
