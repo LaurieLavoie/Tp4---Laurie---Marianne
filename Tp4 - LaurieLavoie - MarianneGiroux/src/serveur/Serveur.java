@@ -3,6 +3,7 @@ package serveur;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,6 +15,8 @@ import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
+import java.util.Scanner;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -89,11 +92,11 @@ public class Serveur implements Runnable {
                              }
                          }
 
-                         if(this.message.contains("jouer"))
+                         if(this.message.contains("sendWord"))
                          {
                         	 try
                         	 {
-                                 clientMsg = xpath.evaluate("/jouer", doc);
+                                 clientMsg = xpath.evaluate("/sendWord", doc);
                                  this.sendWord();
                         	 }
                          
@@ -350,34 +353,95 @@ public class Serveur implements Runnable {
          /**
       	* Envoie un mot au hasard à partir de la liste : "liste_français.txt"
       	*/
-         private synchronized void sendWord()
+         private synchronized void sendWord() throws FileNotFoundException
          {
-             BufferedReader br = null;
-             try
-             {
-                     br = new BufferedReader(new FileReader("liste_francais.txt"));
-             }
-             catch (FileNotFoundException e)
-             {
-                    e.printStackTrace();
-             }
+        	 
+        	  	String word = "";
+//             BufferedReader br = null;
+//             try
+//             {
+//                     br = new BufferedReader(new FileReader("liste_francais.txt"));
+//             }
+//             catch (FileNotFoundException e)
+//             {
+//                    e.printStackTrace();
+//             }
+             
+        	  	
+        	  	int lines = 0;
+        	  	BufferedReader reader = null;
+				try {
+					reader = new BufferedReader(new FileReader("liste_francais.txt"));
+					
+	        	  	while (reader.readLine() != null)
+	        	  	{ 
+	        	  		lines++;
+	        	  	}
+	        	  	
+	        	  	
+				} catch (IOException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	 
+        	  	
+       
+	              
+//	             try {
+//					word = br.readLine();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+	             
+	             
+	       
+             
+             
+//             LineNumberReader reader = new LineNumberReader(br);
+//             int nbLine = reader.getLineNumber();
+        	  int randomWord = (int) (Math.random() * (lines));
 
-             LineNumberReader reader = new LineNumberReader(br);
-             int nbLine = reader.getLineNumber();
-             double randomWord = Math.random() * (nbLine);
-             String word = "";
+        	  reader = new BufferedReader(new FileReader("liste_francais.txt"));
+//             String word = "";
              for(int i = 0; i< randomWord ; i++)
              {
                  try
                  {
-                	 word = br.readLine();
+                	 word = reader.readLine();
                  }
                  catch (IOException e)
                  {
                 	 e.printStackTrace();
                  }
              }
-                
+               
+//        	  	
+//        	   Random rand = new Random();
+//              double n = 0;
+//              for(Scanner sc = new Scanner("liste_francais.txt"); sc.hasNext(); )
+//              {
+//                 ++n; 
+//                 String line = sc.nextLine();
+//                 if(randomWord == n)
+//                    word = line;         
+//              }
+////   	
+             
+
+//           String result = null;
+//           Random rand = new Random();
+//           int n = 0;
+//           for(Scanner sc = new Scanner("liste_francais.txt"); sc.hasNext(); )
+//           {
+//              ++n; 
+//              String line = sc.nextLine();
+//              if(rand.nextInt(n) == randomWord)
+//                 result = line;         
+//           }
+////        	  	
+//        	 System.out.print("asdfdghjkliuytresA");
              String xml = "<word>" + word + "</word>";
              sendMessage(xml);
          }
@@ -479,7 +543,7 @@ public class Serveur implements Runnable {
              }
                               
               
-             System.out.println("ancdefghijklmnopqrstuvwxyz");     
+             
                              
              if(line.contains("/password"))
              {

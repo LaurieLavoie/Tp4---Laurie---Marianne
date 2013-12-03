@@ -134,10 +134,46 @@ public class Client
                     while(quitter == false)
                     {
                         int messageClient = clientChoice();
-                        
+                       
+                		
                         if (messageClient == 1)
                         {
-                        	this.playGame();
+                        	
+                        
+                        	String xml = "<sendWord>send</sendWord>";
+                        	this.sendMessage(xml);
+                        	
+                        	this.message = (String)in.readObject();
+                        	 XPathFactory xpathFactory = XPathFactory.newInstance();
+                        	 XPath xpath = xpathFactory.newXPath();
+                			InputSource source = new InputSource(new StringReader(this.message));
+                			Document doc = null;
+                			System.out.println("serveur>" + this.message);
+                    		String wordXml = "";
+                    		try
+                            {
+                                doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+                            }
+                    		
+                            catch (XPathExpressionException e)
+                            {
+                                e.printStackTrace();
+                            }
+                    		
+
+                            try
+                            {
+                            	wordXml = xpath.evaluate("/word", doc);
+                            
+                            }
+                            
+                            catch (XPathExpressionException e)
+                            {
+                            	e.printStackTrace();
+                            }
+                        	
+                        	
+                        	this.playGame(wordXml);
                         }
                         else if(messageClient == 2)
                         {
@@ -189,47 +225,22 @@ public class Client
         }
     }
     
+        
+        
+    
     /**
   	* Permet de commencer une partie et de gérer les classes pour y jouer
   	*/
-    private void playGame()
+    private void playGame(String word)
     {
     	//TODO : recevoir le mot du serveur
     	
-    	String xml = "<word>send</word>";
-    	this.sendMessage(xml);
     	
-    	XPathFactory xpathFactory = XPathFactory.newInstance();
-        XPath xpath = xpathFactory.newXPath();
-		InputSource source = new InputSource(new StringReader(this.message));
-		Document doc = null;
-		System.out.println("serveur>" + this.message);
- 
-		try
-        {
-            doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
-        }
-		
-        catch (XPathExpressionException e)
-        {
-            e.printStackTrace();
-        }
-		
-
-        try
-        {
-        	xml = xpath.evaluate("/word", doc);
-        }
-        
-        catch (XPathExpressionException e)
-        {
-        	e.printStackTrace();
-        }
-		
+		System.out.println(word);
 		
     	
-    	
-    	int length = xml.length();
+    	int count = 0;
+    	int length = word.length();
     	
     	//Tableau contenant chaque lettre du mot séparément
     	this.tabChar = new char[length];
@@ -237,7 +248,10 @@ public class Client
     	//Tableau contenant des booléens qui indiquent si la lettre du tableau de char à la même position a été
     	//découverte
     	this.tabDiscoveredLetter = new boolean[length];
-    	
+    	 for (int i = 0; i < length; i++)
+         {
+         	this.tabDiscoveredLetter[i] = false;
+     	}
     	boolean allDiscovered = false;
     	
     	while (allDiscovered == false)
@@ -263,6 +277,7 @@ public class Client
         	try 
         	{
 				enteredChar = in.readLine();
+				
 			} 
         	catch (IOException e) 
         	{	
@@ -290,8 +305,8 @@ public class Client
     			}
     		}	
     	}
-    	
-    	this.displayWord(this.tabChar.toString());
+    	System.out.println(this.tabChar[1]);
+//    	this.displayWord(this.tabChar.toString());
     }
     
     /**
