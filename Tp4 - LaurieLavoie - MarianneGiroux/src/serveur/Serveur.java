@@ -329,6 +329,24 @@ public class Serveur implements Runnable {
              }
          }
         
+         
+//         public static String choose(File f) throws FileNotFoundException
+//         {
+//            String result = null;
+//            Random rand = new Random();
+//            int n = 0;
+//            for(Scanner sc = new Scanner(f); sc.hasNext(); )
+//            {
+//               ++n; 
+//               String line = sc.nextLine();
+//               if(rand.nextInt(n) == 0)
+//                  result = line;         
+//            }
+//
+//            return result;      
+//         }
+//       }
+         
          /**
       	* Envoie un mot au hasard à partir de la liste : "liste_français.txt"
       	*/
