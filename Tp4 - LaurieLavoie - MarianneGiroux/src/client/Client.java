@@ -18,366 +18,503 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 
-public class Client 
+/**
+ * La classe Client contient les fonctionnalités côté client du jeu "bonhomme pendu"
+ * @author Marianne Giroux et Laurie Lavoie
+ */
+
+
+public class Client
 {
-
-	private Socket socket;
-	
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
-    private String message;
-    
-    
-	
-	
-	public Client()
-	{
-		
-	}
-	
-	void run()
-    {
-        try{
-            //1. creating a socket to connect to the server
-        	int port = 0;
-        	port = this.enteredPort();
-            this.socket = new Socket("162.209.100.18",port);
-			System.out.println("Client connect� sur le port :  " + port);
-
-            //2. get Input and Output streams
-            this.out = new ObjectOutputStream(this.socket.getOutputStream());
-            this.out.flush();
-            this.in = new ObjectInputStream(this.socket.getInputStream());
-        	boolean quitter = false;
-        	String msgXml = "";
-        	
-        	
-        	
-        	try {
-				this.message = (String)in.readObject();
-			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-        	
-        	
-        	
-        	do
+        private Socket socket;
+	    private ObjectOutputStream out;
+	    private ObjectInputStream in;
+	    private String message;
+	    private char[] tabChar;
+	    private boolean[] tabDiscoveredLetter;
+        
+        /**
+      	* Fait rouler l'application du côté client
+      	*/
+        void run()
+        {
+        	try
         	{
-        		try {
-        			loginUser();
-        			XPathFactory xpathFactory = XPathFactory.newInstance();
-        			XPath xpath = xpathFactory.newXPath();
-                	InputSource source = new InputSource(new StringReader(this.message));
-                	Document doc = null;
-                	System.out.println("serveur>" + this.message);
-					
-	            	
-	            	try
-            		{
-            			doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
-            		} 
-            		catch (XPathExpressionException e)
-            		{
-            			
-            			e.printStackTrace();
-            		}
-            		
-            		
-            		try 
-            			{
-							msgXml = xpath.evaluate("/name/client", doc);
-						} 
-            		catch (XPathExpressionException e)
-            			{
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-            		try 
-            			{
-							msgXml = xpath.evaluate("/password/client", doc);
-						} 
-            		catch (XPathExpressionException e)
-            			{
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-            		
-            		try 
-        			{
-						msgXml = xpath.evaluate("/loginUser", doc);
-					} 
-            		catch (XPathExpressionException e)
-        			{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            		
-	            
-	            	
-        		}
-        		finally
-        		{
-        				System.out.println(msgXml);
-        		}
-        		
-        	
-        		
-        	}while(!msgXml.equals("ok"));
-        	
-        	
-        	
-            //3: Communicating with the server
-            do{
-                try{
+            //1. creating a socket to connect to the server
+                int port = 0;
+                port = this.enteredPort();
+                this.socket = new Socket("162.209.100.18",port);
+                System.out.println("Client connecté sur le port : " + port);
 
-
-                	while(quitter == false)
-                	{
-
-                		int messageClient = clientChoice();
-                		XPathFactory xpathFactory = XPathFactory.newInstance();
-            			XPath xpath = xpathFactory.newXPath();
-                    	InputSource source = new InputSource(new StringReader(this.message));
-                    	Document doc = null;
-                    	System.out.println("serveur>" + this.message);
-                		
-                    	
-                    	if (messageClient == 1)
-                		{
-                			this.playGame();
-                		}
-                		else if(messageClient == 2)
-                		{
-                			this.seeScore();
-                		}
-                		else if(messageClient == 3)
-                		{
-
-                		
-                			this.quit();
-                			try 
-                			{
-    							msgXml = xpath.evaluate("/quitter", doc);
-    							quitter = true;
-    						} 
-                			catch (XPathExpressionException e)
-                			{
-    							// TODO Auto-generated catch block
-    							e.printStackTrace();
-    						}
-                			
-
-                		}	                	
-//                    
-                	}
-            		this.message = (String)this.in.readObject();
-
+	            //2. get Input and Output streams
+	            this.out = new ObjectOutputStream(this.socket.getOutputStream());
+	            this.out.flush();
+	            this.in = new ObjectInputStream(this.socket.getInputStream());
+	            boolean quitter = false;
+	            String msgXml = "";
+	            do
+	            {
+	            	try 
+	            	{
+	            		loginUser();
+                                
+						
+						this.message = (String)in.readObject();
+						XPathFactory xpathFactory = XPathFactory.newInstance();
+		                XPath xpath = xpathFactory.newXPath();
+						InputSource source = new InputSource(new StringReader(this.message));
+						Document doc = null;
+						System.out.println("serveur>" + this.message);
+                 
+						try
+                        {
+                            doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+                        }
+						
+                        catch (XPathExpressionException e)
+                        {
+                            e.printStackTrace();
+                        }
+                            
+                        try
+                        {
+                            try
+                            {
+                            	msgXml = xpath.evaluate("/name/client", doc);
+                            }
+                            
+                            catch (XPathExpressionException e)
+                            {
+                            	e.printStackTrace();
+                            }
+                                    
+                            try
+                            {
+                            	msgXml = xpath.evaluate("/password/client", doc);
+                            }
+                            
+                            catch (XPathExpressionException e)
+                            {
+                            	e.printStackTrace();
+                            }
+                            
+                            
+                            try
+                            {
+                            	msgXml = xpath.evaluate("/loginUser", doc);
+                            }
+                            
+                            catch (XPathExpressionException e)
+                            {
+                            	e.printStackTrace();
+                            }
+                            
+                        }
+                        finally
+                        {
+                         
+                        }   
+                    }
+	                
+	            	catch (ClassNotFoundException e)
+	                {
+	                	e.printStackTrace();
+	                }
+                        
                 }
-                catch(ClassNotFoundException classNot){
+	            while(!msgXml.equals("ok"));
+                
+                
+                
+            //3: Communicating with the server
+            do
+            {
+                try
+                {
+                    while(quitter == false)
+                    {
+                        int messageClient = clientChoice();
+                        
+                        if (messageClient == 1)
+                        {
+                        	this.playGame();
+                        }
+                        else if(messageClient == 2)
+                        {
+                        	this.seeScore();
+                        }
+                        
+                        else if(messageClient == 3)
+                        {
+////                        	quitter = true;
+                        	System.out.println("server>" + this.message);
+                        	sendMessage("Hi my server");                
+                        	this.message = "bye";
+                        	sendMessage(this.message);
+                       }                 
+                    }
+                    
+                    this.message = (String)this.in.readObject();
+                }
+                
+                catch(ClassNotFoundException classNot)
+                {
                     System.err.println("data received in unknown format");
                 }
-            }while(!quitter);
+                
+            }
+            while(!quitter);
         }
-        catch(UnknownHostException unknownHost){
+        	
+        catch(UnknownHostException unknownHost)
+        {
             System.err.println("You are trying to connect to an unknown host!");
         }
-        catch(IOException ioException){
+        catch(IOException ioException)
+        {
             ioException.printStackTrace();
         }
-        finally{
+        	
+        finally
+        {
             //4: Closing connection
             try{
                 this.in.close();
                 this.out.close();
                 this.socket.close();
-            }
+            	}
             catch(IOException ioException){
                 ioException.printStackTrace();
             }
         }
     }
-	private void playGame() 
-	{
-		
-	}
-	private void enteredChar()
-	{
-		
-	}
-	private void displayWord()
-	{
-		
-	}
-	private void loginUser()
-	{
-		int choice = 0;
-    	System.out.print("Entr� 1 pour vous connecter, 2 pour cr�er un compte: ");
-		try 
-		{
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			String line = in.readLine();
-			System.out.println("Vous avez choisi :  " + line);
-			choice = Integer.parseInt(line);
-		
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		
-		if(choice == 1)
-		{
-			userExist();
-		}
-		else if(choice == 2)
-		{
-			createUser();
-		}
-		
-		
-		
-	}
-	
-	private void userExist()
-	{
-		System.out.println("Entrez votre nom d'utilisateur : ");
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		String lineUsername = "";
-		
-		try 
-		{
-			lineUsername = in.readLine();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("Entrez votre mot de passe : ");
-		BufferedReader inPsswd = new BufferedReader(new InputStreamReader(System.in));
-		String linePassword = "";
-		try 
-		{
-			linePassword = inPsswd.readLine();
-		} 
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		String xml = "<client><username>" + lineUsername + "</username><password>" + linePassword +"</password></client>";
-		sendMessage(xml);
-	}
-	
-	private void sendScore()
-	{
-		
-	}
-	private void createUser()
-	{
-		System.out.println("Entrez votre nom d'utilisateur : ");
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		String lineUsername = "";
-		
-		try {
-			lineUsername = in.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("Entrez votre mot de passe : ");
-		BufferedReader inPsswd = new BufferedReader(new InputStreamReader(System.in));
-		String linePassword = "";
-		try {
-			linePassword = inPsswd.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		String xml = "<client><newName>" + lineUsername + "</newName><newPassword>" + linePassword +"</newPassword></client>";
-		sendMessage(xml);
-	}
-	
- 	private void seeScore()
-	{
-		
-	}
-	private void generateXml()
-	{
-		
-	}
-	private void quit()
-	{
-	 	
-		
-    	String xml = "<quitter>quit</quitter>";
-        sendMessage(xml);
-        
-        
-        
-	}
-	private int clientChoice() 
-	{
-		int choice = 0;
+    
+    /**
+  	* Permet de commencer une partie et de gérer les classes pour y jouer
+  	*/
+    private void playGame()
+    {
+    	//TODO : recevoir le mot du serveur
     	
-    	System.out.print("Entr� 1 pour jouer, 2 pour voir vos scores ou 3 pour quitter: ");
-		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			String line = in.readLine();
-			System.out.println("Vous avez choisi :  " + line);
-			choice = Integer.parseInt(line);
+    	String xml = "<word>send</word>";
+    	this.sendMessage(xml);
+    	
+    	XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();
+		InputSource source = new InputSource(new StringReader(this.message));
+		Document doc = null;
+		System.out.println("serveur>" + this.message);
+ 
+		try
+        {
+            doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+        }
 		
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        catch (XPathExpressionException e)
+        {
+            e.printStackTrace();
+        }
 		
-		
-		return choice;
-	}
 
-	public int enteredPort()
-	    {
-	    	int port = 0;
-	    	
-	    	System.out.println("Entrez le port d�sir�: ");
-			try {
-				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-				String line = in.readLine();
-
-				port =  Integer.parseInt(line);
-				
-			} catch (IOException e) {
+        try
+        {
+        	xml = xpath.evaluate("/word", doc);
+        }
+        
+        catch (XPathExpressionException e)
+        {
+        	e.printStackTrace();
+        }
+		
+		
+    	
+    	
+    	int length = xml.length();
+    	
+    	//Tableau contenant chaque lettre du mot séparément
+    	this.tabChar = new char[length];
+    	
+    	//Tableau contenant des booléens qui indiquent si la lettre du tableau de char à la même position a été
+    	//découverte
+    	this.tabDiscoveredLetter = new boolean[length];
+    	
+    	boolean allDiscovered = false;
+    	
+    	while (allDiscovered == false)
+    	{
+    		//Vérifie si toutes les lettres du tableau ont été découvertes. Si oui, la partie est gagnée!!
+    		for (int i = 0; i < length; i++)
+    		{
+    			if (this.tabDiscoveredLetter[i] == false)
+    			{
+    				break;
+    			}
+    			
+    			if (i == length && this.tabDiscoveredLetter[i] == true)
+    			{
+    				allDiscovered = true;
+    			}
+    		}
+    		
+    		System.out.println("Veuillez entrer une lettre : ");
+    		
+    	    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            String enteredChar = "";
+        	try 
+        	{
+				enteredChar = in.readLine();
+			} 
+        	catch (IOException e) 
+        	{	
 				e.printStackTrace();
 			}
-			
-			return port;
-	    	
-	    }
+        	
+        	this.enteredChar(enteredChar.charAt(0), length);
+    	}
+    	
+    	System.out.println("Bravo, vous avez découvert le mot! ");
+    }
+    
+    /**
+  	* Gère le caractère entré pour déterminer s'il a déjà été entré ou s'il est contenu ou non dans le mot
+  	*/
+    private void enteredChar(char enteredChar, int length)
+    {
+    	for (int i = 0; i < length; i++)
+    	{
+    		if (this.tabDiscoveredLetter[i] == false)
+    		{
+    			if (this.tabChar[i] == enteredChar)
+    			{
+    				this.tabDiscoveredLetter[i] = true;
+    			}
+    		}	
+    	}
+    	
+    	this.displayWord(this.tabChar.toString());
+    }
+    
+    /**
+  	* Montre le nombre de lettres du mot par des "_" et les lettres déjà devinées sont affichées
+  	*/
+    private void displayWord(String recievedWord)
+    {  	
+    	String displayedWord = "";
+    	
+    	for (int i = 0; i < recievedWord.length(); i++)
+    	{
+    		if (this.tabDiscoveredLetter[i] == true)
+    		{
+    			displayedWord += this.tabChar[i];
+    		}
+    		
+    		else
+    		{
+    			displayedWord += "_ ";
+    		}
+    	}
+    	System.out.print(displayedWord);
+    }
+        
+    private void loginUser()
+    {
+            int choice = 0;
+        System.out.print("Entrez 1 pour vous connecter, 2 pour créer un compte: ");
+            try
+            {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+                    String line = in.readLine();
+                    System.out.println("Vous avez choisi : " + line);
+                    choice = Integer.parseInt(line);
+            }
+            
+            catch (IOException e)
+            {
+                    e.printStackTrace();
+            }
+            
+            if(choice == 1)
+            {
+                    userExist();
+            }
+            else if(choice == 2)
+            {
+                    createUser();
+            }
+    }
+        
+    private void userExist()
+    {
+            System.out.println("Entrez votre nom d'utilisateur : ");
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            String lineUsername = "";
+            
+            try
+            {
+            	lineUsername = in.readLine();
+            }
+            catch (IOException e)
+            {
+            	e.printStackTrace();
+            }
+            
+            System.out.println("Entrez votre mot de passe : ");
+            BufferedReader inPsswd = new BufferedReader(new InputStreamReader(System.in));
+            String linePassword = "";
+            
+            try
+            {
+            	linePassword = inPsswd.readLine();
+            }
+            catch (IOException e)
+            {
+            	e.printStackTrace();
+            }
+            
+            String xml = "<client><username>" + lineUsername + "</username><password>" + linePassword +"</password></client>";
+            sendMessage(xml);
+    }
+    
+    /**
+  	* À la fin d'une partie, envoie le score au serveur afin qu'il l'enregistre
+  	*/
+    private void sendScore()
+    {
+            
+    }
+    
+    /**
+  	* Permet d'entrer un nouveau nom d'utilisateur ainsi qu'un nouveau mot de passe pour créer un compte sur 
+  	* le serveur
+  	*/
+    private void createUser()
+    {
+            System.out.println("Entrez votre nom d'utilisateur : ");
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            String lineUsername = "";
+            
+            try 
+            {
+            	lineUsername = in.readLine();
+            } 
+            catch (IOException e) 
+            {
+            	e.printStackTrace();
+            }
+            
+            System.out.println("Entrez votre mot de passe : ");
+            BufferedReader inPsswd = new BufferedReader(new InputStreamReader(System.in));
+            String linePassword = "";
+            try
+            {
+            	linePassword = inPsswd.readLine();
+            }
+            catch (IOException e) 
+            {
+            	e.printStackTrace();
+            }
+            
+            String xml = "<client><newName>" + lineUsername + "</newName><newPassword>" + linePassword +"</newPassword></client>";
+            sendMessage(xml);
+    }
+    
+    /**
+  	* Montre le meilleur score enregistré d'un utilisateur
+  	*/
+    private void seeScore()
+    {
+    	
+    }
+     
+    /**
+  	* Génère la XML à envoyer au serveur
+  	*/
+    private void generateXml()
+    {
+    	
+    }
+    
+    /**
+  	* Quitte l'application côté client
+  	*/
+    private void quit()
+    {
+    	try 
+    	{
+			this.socket.close();
+			System.out.println("Fermeture de la session");
+		} catch (IOException e) {
+			System.out.println("La session n'a pas pu être fermée");
+		}
+    }
+        
+    /**
+  	* Gère le menu
+  	*/
+    private int clientChoice()
+    {
+    	int choice = 0;
+        System.out.print("Entrez 1 pour jouer, 2 pour voir vos scores ou 3 pour quitter: ");
+        
+        try 
+        {
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            String line = in.readLine();
+            System.out.println("Vous avez choisi : " + line);
+            choice = Integer.parseInt(line);
+        }
+        
+        catch (IOException e) 
+        {
+        	e.printStackTrace();
+        }
+            
+        return choice;
+    }
+
+    public int enteredPort()
+    {
+    	int port = 0;
+             
+    	System.out.println("Entrez le port désiré: ");
+    	try
+    	{
+    		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    		String line = in.readLine();
+
+    		port = Integer.parseInt(line);
+    	}
+    	
+    	catch (IOException e) 
+    	{
+    		e.printStackTrace();
+    	}
+
+    	return port;            
+    }
+      
+    /**
+  	* Envoie un message au serveur
+  	*/
     void sendMessage(String msg)
     {
-        try{
-
-            this.out.writeObject(msg);
-            this.out.flush();
-            System.out.println("client>" + msg);
-        }
-        catch(IOException ioException){
-            ioException.printStackTrace();
-        }
+        	try
+        	
+        	{
+        		this.out.writeObject(msg);
+        		this.out.flush();
+        		System.out.println("client>" + msg);
+        	}
+        	
+        	catch(IOException ioException)
+        	{
+        		ioException.printStackTrace();
+        	}
     }
+        
     public static void main(String args[])
     {
         Client client = new Client();
-    	client.run();
+        client.run();
     }
-	
-	
-
 }
