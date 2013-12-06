@@ -198,9 +198,10 @@ public class Serveur implements Runnable {
          //4: Closing connection
         	 try
         	 {
-        		 in.close();
-        		 out.close();
-        		 ssock.close();
+        		 this.in.close();
+        		 this.connection.close();
+        		 this.out.close();
+        		 this.ssock.close();
         	 }
         	 catch(IOException ioException)
         	 {

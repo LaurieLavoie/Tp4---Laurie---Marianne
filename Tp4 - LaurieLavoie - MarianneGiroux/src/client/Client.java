@@ -18,6 +18,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 
+
 /**
  * La classe Client contient les fonctionnalités côté client du jeu "bonhomme pendu"
  * @author Marianne Giroux et Laurie Lavoie
@@ -43,7 +44,7 @@ public class Client
             //1. creating a socket to connect to the server
                 int port = 0;
                 port = this.enteredPort();
-                this.socket = new Socket("162.209.100.18",port);
+                this.socket = new Socket("localhost",18000);
                 System.out.println("Client connecté sur le port : " + port);
 
 	            //2. get Input and Output streams
@@ -182,11 +183,10 @@ public class Client
                         
                         else if(messageClient == 3)
                         {
-////                        	quitter = true;
-                        	System.out.println("server>" + this.message);
-                        	sendMessage("Hi my server");                
-                        	this.message = "bye";
-                        	sendMessage(this.message);
+                        
+                        	String xml = "<quitter>quitter</quitter>";
+                        	sendMessage(xml);
+                        	quitter = true;
                        }                 
                     }
                     
@@ -239,7 +239,7 @@ public class Client
 		System.out.println(word);
 		
     	
-    	int count = 0;
+//    	int count = 0;
     	int length = word.length();
     	
     	//Tableau contenant chaque lettre du mot séparément
@@ -312,25 +312,25 @@ public class Client
     /**
   	* Montre le nombre de lettres du mot par des "_" et les lettres déjà devinées sont affichées
   	*/
-    private void displayWord(String recievedWord)
-    {  	
-    	String displayedWord = "";
-    	
-    	for (int i = 0; i < recievedWord.length(); i++)
-    	{
-    		if (this.tabDiscoveredLetter[i] == true)
-    		{
-    			displayedWord += this.tabChar[i];
-    		}
-    		
-    		else
-    		{
-    			displayedWord += "_ ";
-    		}
-    	}
-    	System.out.print(displayedWord);
-    }
-        
+//    private void displayWord(String recievedWord)
+//    {  	
+//    	String displayedWord = "";
+//    	
+//    	for (int i = 0; i < recievedWord.length(); i++)
+//    	{
+//    		if (this.tabDiscoveredLetter[i] == true)
+//    		{
+//    			displayedWord += this.tabChar[i];
+//    		}
+//    		
+//    		else
+//    		{
+//    			displayedWord += "_ ";
+//    		}
+//    	}
+//    	System.out.print(displayedWord);
+//    }
+//        
     private void loginUser()
     {
             int choice = 0;
@@ -393,10 +393,10 @@ public class Client
     /**
   	* À la fin d'une partie, envoie le score au serveur afin qu'il l'enregistre
   	*/
-    private void sendScore()
-    {
-            
-    }
+//    private void sendScore()
+//    {
+//            
+//    }
     
     /**
   	* Permet d'entrer un nouveau nom d'utilisateur ainsi qu'un nouveau mot de passe pour créer un compte sur 
@@ -442,28 +442,31 @@ public class Client
     }
      
     /**
-  	* Génère la XML à envoyer au serveur
-  	*/
-    private void generateXml()
-    {
-    	
-    }
-    
-    /**
   	* Quitte l'application côté client
   	*/
-    private void quit()
-    {
-    	try 
-    	{
-			this.socket.close();
-			System.out.println("Fermeture de la session");
-		} catch (IOException e) {
-			System.out.println("La session n'a pas pu être fermée");
-		}
-    }
+//    private void quit()
+//    {
+//    	try 
+//    	{
+//			this.socket.close();
+//			System.out.println("Fermeture de la session");
+//		} catch (IOException e) {
+//			System.out.println("La session n'a pas pu être fermée");
+//		}
+//    }
         
     /**
+	* Génère la XML à envoyer au serveur
+	*/
+//	private void generateXml()
+//	{
+//		
+//	}
+
+
+
+
+	/**
   	* Gère le menu
   	*/
     private int clientChoice()
@@ -529,7 +532,8 @@ public class Client
         
     public static void main(String args[])
     {
-        Client client = new Client();
-        client.run();
+    	
+    	Client client = new Client();
+    	client.run();
     }
 }
