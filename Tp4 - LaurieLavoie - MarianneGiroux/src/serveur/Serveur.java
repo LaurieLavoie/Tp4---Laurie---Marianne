@@ -53,7 +53,7 @@ public class Serveur implements Runnable {
         		 this.out = new ObjectOutputStream(connection.getOutputStream());
 		         this.out.flush();
 		         in = new ObjectInputStream(connection.getInputStream());
-		         boolean quitter = false;
+		         boolean quit = false;
 		        
 		         //4. The two parts communicate via the input and output streams
 		         do
@@ -78,13 +78,14 @@ public class Serveur implements Runnable {
                                  e.printStackTrace();
                          }
                          
-                         if(this.message.contains("quitter"))
+                         if(this.message.contains("quit"))
                          {
                         	 try
                              {
-                                     clientMsg = xpath.evaluate("/quitter", doc);
+                                     clientMsg = xpath.evaluate("/quit", doc);
                                      this.quit();
-                                     quitter = true;
+                                	
+                                     quit = true;
                              }
                         	 catch (XPathExpressionException e)
                              {
@@ -106,12 +107,12 @@ public class Serveur implements Runnable {
                         	 }
                          }
                          
-                         if(this.message.contains("voirScore"))
+                         if(this.message.contains("seeScore"))
                          {
                         	 
                         	 try
                         	 {
-                                 clientMsg = xpath.evaluate("/voirScore", doc);
+                                 clientMsg = xpath.evaluate("/seeScore", doc);
                                  this.getScore();
                         	 }
                         	 catch (XPathExpressionException e)
@@ -121,12 +122,13 @@ public class Serveur implements Runnable {
                         	 }
                          }
                          
-                         if(this.message.contains("nouveauScore") && this.message.contains("essai"))
+                         if(this.message.contains("newScore"))
                          {
                         	 try
                         	 {
-                                 clientMsg = xpath.evaluate("/nouveauScore/essai", doc);
-                                 this.setScore(clientMsg, "essai");
+                                 String nbTry = xpath.evaluate("/newScore/try", doc);
+                                 String word = xpath.evaluate("/newScore/word", doc);
+                                 this.setScore(word, nbTry);
                         	 }
                         	 catch (XPathExpressionException e)
                         	 {
@@ -134,19 +136,7 @@ public class Serveur implements Runnable {
                         	 }
                          }
                          
-                         if(this.message.contains("nouveauScore") && this.message.contains("mot"))
-                         {
-                        	 try
-                        	 {
-                                 clientMsg = xpath.evaluate("/nouveauScore/mot", doc);
-                                 this.setScore(clientMsg, "mot");
-                        	 }
-                        	 
-                        	 catch (XPathExpressionException e)
-                        	 {    
-                                 e.printStackTrace();
-                        	 }
-                         }
+                       
                          if(this.message.contains("name"))
                          {
 	                         try
@@ -184,7 +174,7 @@ public class Serveur implements Runnable {
 		        }
        
 		         }
-		 while(!quitter);
+		 while(!quit);
         	 }
          
         	 catch(IOException ioException)
@@ -214,23 +204,23 @@ public class Serveur implements Runnable {
       	* @param	clientMsg	Le nom d'utilisateur
       	* @param	typeScore	Le score de l'utilisateur
       	*/
-         private synchronized void setScore(String clientMsg, String typeScore)
+         private synchronized void setScore(String word, String nbTry)
          {
              String xml = "";
              FileWriter writer = null;
-             String text = "<score><" + typeScore + ">" + typeScore + ": " + clientMsg + "</" + typeScore + "></score>";
+             String text = "<score><try>" + nbTry + "</try><word>"  + word + "</word></score>\r\n";
              
              try
              {
             	 writer = new FileWriter(this.nameUser + ".txt", true);
                  writer.write(text,0,text.length());
-                 xml = "<newScore>"+ typeScore +"ok</" + typeScore +"</newScore>";
+                 xml = "<newScore>ok</newScore>";
                  sendMessage(xml);
              }
              catch(IOException ex)
              {
                  ex.printStackTrace();
-                 xml = "<newScore>erreur</newScore>";
+                 xml = "<newScore>error</newScore>";
                  sendMessage(xml);
              }
                 
@@ -329,7 +319,15 @@ public class Serveur implements Runnable {
                  }
                          
                  System.out.println("Connecté");
-                 new Thread(new Serveur(sock)).start();   
+                 
+                 Thread thread = new Thread(new Serveur(sock));   
+                thread.start();
+                try {
+					thread.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
              }
          }
         
@@ -452,8 +450,11 @@ public class Serveur implements Runnable {
       	*/
          private synchronized void getScore()
          {
+        	 
+        	 int nbScores = 0;
                  try
                  {    
+                	
                     BufferedReader buff = new BufferedReader(new FileReader(this.nameUser + ".txt"));
                         
                     try
@@ -462,14 +463,22 @@ public class Serveur implements Runnable {
                 
                     	while ((line = buff.readLine()) != null)
                     	{
-                            System.out.println(line);
+                            
                             if(line.contains("<score>"))
                             {
+                            	nbScores++;
                                 sendMessage(line);
                             }
                         
                     	}
+                    	
+                    	   if(nbScores == 0)
+                           {
+                           	 sendMessage("<score>Pas de score</score>");
+                           }
                     } 
+                    
+                 
                     finally
                     {
                     	buff.close();
@@ -478,8 +487,8 @@ public class Serveur implements Runnable {
                  }
                  catch (IOException ioe)
                  {
-                	 System.out.println("Erreur --" + ioe.toString());
-                	 sendMessage("<score>Erreur</score>");
+                	 
+                	 sendMessage("<score>error</score>");
                  }
          }
         
@@ -487,8 +496,20 @@ public class Serveur implements Runnable {
          private synchronized void quit()
          {
              System.out.println(this.nameUser + " se déconnecte. ");
-             String xml = "<quitter>ok</quitter>";
+             String xml = "<quit>ok</quit>";
              sendMessage(xml);
+             
+             try
+        	 {
+        		 this.in.close();
+        		 this.connection.close();
+        		 this.out.close();
+        		 this.ssock.close();
+        	 }
+        	 catch(IOException ioException)
+        	 {
+        		 ioException.printStackTrace();
+        	 }
          }
          
          /*Compare le mot de passe avec celui que l'utilisateur a entré et celui qui est contenu dans le fichier texte
@@ -560,7 +581,7 @@ public class Serveur implements Runnable {
 	            	 
             	 catch (XPathExpressionException e)
             	 {
-	            		 String xml = "<client><password>erreur</password></client>";
+	            		 String xml = "<client><password>error</password></client>";
                                                       
 	            		 sendMessage(xml);
                              
@@ -601,7 +622,7 @@ public class Serveur implements Runnable {
         	 }
         	 else
         	 {
-        		 String xml = "<client><name>Erreur</name></client>";
+        		 String xml = "<client><name>error</name></client>";
         		 sendMessage(xml);
         	 }
          }
@@ -623,7 +644,7 @@ public class Serveur implements Runnable {
                      {
                          BufferedWriter writer = new BufferedWriter(new FileWriter(new File(clientMsg + ".txt")));
                          writer.write("<client><username>" + clientMsg + "</username>");
-                         writer.write("<password>" + Password + "</password></client>");
+                         writer.write("<password>" + Password + "</password></client>\r\n");
                          writer.close();
                          xml = "<client><new>ok</new></client>";
                          sendMessage(xml);
@@ -637,7 +658,7 @@ public class Serveur implements Runnable {
                  
                  else
                  {
-                     xml = "<client><new>erreur</new></client>";
+                     xml = "<client><new>error</new></client>";
                      sendMessage(xml);
                  }
          }
