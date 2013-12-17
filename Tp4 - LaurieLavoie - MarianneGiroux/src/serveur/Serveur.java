@@ -552,6 +552,7 @@ public class Serveur implements Runnable {
             	 try 
             	 {
             		 clientPassword = xpath.evaluate("/client/password", doc);
+            		 
             		 String xml = "<loginUser>ok</loginUser>";
             		 sendMessage(xml);
                              
@@ -559,7 +560,7 @@ public class Serveur implements Runnable {
 	            	 
             	 catch (XPathExpressionException e)
             	 {
-	            		 String xml = "<client><password>Erreur</password></client>";
+	            		 String xml = "<client><password>erreur</password></client>";
                                                       
 	            		 sendMessage(xml);
                              
@@ -621,8 +622,8 @@ public class Serveur implements Runnable {
                      try
                      {
                          BufferedWriter writer = new BufferedWriter(new FileWriter(new File(clientMsg + ".txt")));
-                         writer.write("<username>" + clientMsg + "</username>");
-                         writer.write("<password>" + Password + "</password>");
+                         writer.write("<client><username>" + clientMsg + "</username>");
+                         writer.write("<password>" + Password + "</password></client>");
                          writer.close();
                          xml = "<client><new>ok</new></client>";
                          sendMessage(xml);

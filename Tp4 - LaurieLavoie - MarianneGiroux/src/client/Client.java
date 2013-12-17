@@ -34,18 +34,25 @@ public class Client
 	    private char[] tabChar;
 	    private boolean[] tabDiscoveredLetter;
         
+	    
+	    public Client()
+	    {
+	    	
+	    }
+	    
         /**
       	* Fait rouler l'application du côté client
       	*/
-        void run()
+        public void run()
         {
         	try
         	{
             //1. creating a socket to connect to the server
                 int port = 0;
                 port = this.enteredPort();
-                this.socket = new Socket("localhost",18000);
-                System.out.println("Client connecté sur le port : " + port);
+                String iP = this.enterIp();
+                this.socket = new Socket(iP,port);
+                System.out.println("Client connecté sur le port : " + port + "à l'IP : " + iP);
 
 	            //2. get Input and Output streams
 	            this.out = new ObjectOutputStream(this.socket.getOutputStream());
@@ -398,6 +405,43 @@ public class Client
 //            
 //    }
     
+    
+    private String enterIp()
+    {
+    	String ip = "";
+    	
+        do
+        {
+        	
+        	
+        		System.out.println("Entrez l'IP désiré: ");
+	    	try
+	    	{
+	    		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	    		ip = in.readLine();
+	
+	    		
+	    	}
+	    	
+	    	catch (IOException e) 
+	    	{
+	    		e.printStackTrace();
+	    	}
+	    	
+	    	
+	    	if(ip.length() != 11)
+	    	{
+	    		System.out.println("Ip invalide, veuillez réessayer");
+	    	}
+        }while(ip.length() != 11);
+    
+
+    	          
+    	
+		return ip;
+    	
+    }
+    
     /**
   	* Permet d'entrer un nouveau nom d'utilisateur ainsi qu'un nouveau mot de passe pour créer un compte sur 
   	* le serveur
@@ -490,7 +534,7 @@ public class Client
         return choice;
     }
 
-    public int enteredPort()
+    private int enteredPort()
     {
     	int port = 0;
              
@@ -534,6 +578,6 @@ public class Client
     {
     	
     	Client client = new Client();
-    	client.run();
+//    	client.run();
     }
 }
